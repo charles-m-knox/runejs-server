@@ -1,13 +1,11 @@
 /**
- * Loads NPCs and their spawn point definitions from various files, and
- * dumps them into a single file.
+ * This is a data processing utility that allows us to compile NPCs.
  */
 
 import path from 'path';
 import { convertToNpcs, get2006ScapeNpcDefinitions } from './get-2006scape-npc-defs';
 import { convertToSpawns, get2006scapeNpcSpawnDefinitions } from './get-2006scape-npc-spawns';
-// import { convertToSpawns, getPastebinNpcSpawnDefinitions } from './get-pastebin-npc-spawns';
-import { getExtraCacheNpcDefinitions, convertToNpcs as convertExtraToNpcs } from './get-extra-cache-npc-defs';
+// import { getExtraCacheNpcDefinitions, convertToNpcs as convertExtraToNpcs } from './get-extra-cache-npc-defs';
 
 import * as fs from 'fs/promises';
 import { getAllNpcData, getMonsters } from './get-best-monster';
@@ -28,12 +26,12 @@ export const loadConvertWriteNpcs = async () => {
         return;
     }
 
-    const extraNpcs = await getExtraCacheNpcDefinitions();
+    // const extraNpcs = await getExtraCacheNpcDefinitions();
 
-    if (!spawns) {
-        console.error('failed to retrieve spawns');
-        return;
-    }
+    // if (!extraNpcs) {
+    //     console.error('failed to retrieve extraNpcs');
+    //     return;
+    // }
 
     const monsters = await getMonsters();
 
@@ -44,7 +42,7 @@ export const loadConvertWriteNpcs = async () => {
 
     const convertedNpcs = convertToNpcs(npcs);
     const convertedSpawns = convertToSpawns(spawns);
-    const convertedExtraNpcs = convertExtraToNpcs(extraNpcs);
+    // const convertedExtraNpcs = convertExtraToNpcs(extraNpcs);
 
     // attempt to resolve the best drop tables & stats for each of the npcs
     const npcWithMonsterData = getAllNpcData(npcs, monsters);
@@ -70,5 +68,5 @@ export const loadConvertWriteNpcs = async () => {
     await fs.mkdir(path.join('cache','datasets'), { recursive: true })
     await fs.writeFile(path.join('data','config','npc-spawns','autogen','autogen.json'), JSON.stringify(convertedSpawns));
     await fs.writeFile(path.join('data','config','npcs','autogen','autogen.json'), JSON.stringify(convertedNpcs));
-    await fs.writeFile(path.join('cache','datasets','extra-npcs-data-from-cache.json'), JSON.stringify(convertedExtraNpcs));
+    // await fs.writeFile(path.join('cache','datasets','extra-npcs-data-from-cache.json'), JSON.stringify(convertedExtraNpcs));
 }

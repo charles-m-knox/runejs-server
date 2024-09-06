@@ -1,4 +1,4 @@
-import { DropTable, NpcServerConfig, findItem } from '@engine/config';
+import { DropTable, NpcServerConfig } from '@engine/config';
 import * as fs from 'fs/promises';
 import path from 'path';
 import { NpcDefinition } from './get-2006scape-npc-defs';
@@ -62,8 +62,6 @@ export interface Monster {
 
 /**
  * https://github.com/0xNeffarion/osrsreboxed-db/blob/master/docs/monsters-complete.json
- *
- * @returns
  */
 export const getMonsters = async (): Promise<Monster[]> => {
     try {
@@ -262,36 +260,3 @@ export const getAllNpcData = (npcs: NpcDefinition[], monsters: Monster[]): Recor
 
     return results;
 }
-
-// Main function to match NPCs
-// function matchNPCs(npcDefs, monsters) {
-//     const matches = [];
-
-//     for (const npc of npcDefs) {
-//         const { match, score } = findBestMatch(npc, monsters);
-//         matches.push({
-//             npcDefId: npc.id,
-//             npcDefName: npc.name,
-//             monsterCompleteId: match ? match.id : null,
-//             monsterCompleteName: match ? match.name : null,
-//             similarityScore: score
-//         });
-//     }
-
-//     return matches;
-// }
-
-// Run the matching process
-// const matchResults = matchNPCs(npcDefinitions, monstersComplete);
-
-// Sort results by similarity score (descending)
-// matchResults.sort((a, b) => b.similarityScore - a.similarityScore);
-
-// Output results
-// console.log('NPC Matching Results:');
-// for (const result of matchResults) {
-//     console.log(`NPC Def ID: ${result.npcDefId}, Name: ${result.npcDefName}`);
-//     console.log(`Monster Complete ID: ${result.monsterCompleteId}, Name: ${result.monsterCompleteName}`);
-//     console.log(`Similarity Score: ${result.similarityScore}`);
-//     console.log('---');
-// }
