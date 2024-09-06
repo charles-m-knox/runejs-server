@@ -26,3 +26,6 @@ yarn-error.log*
 /.vs
 
 /coverage/
+
+/cache/extracted/
+/cache/datasets

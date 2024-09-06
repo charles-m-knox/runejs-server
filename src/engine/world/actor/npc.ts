@@ -311,13 +311,18 @@ export class Npc extends Actor {
  * @param npcDetails The NpcDetails of the NPC that contains the DropTable data.
  */
 export function calculateNpcDrops(player: Player, npcDetails: NpcDetails): { itemKey: string, amount?: number }[] {
-    const itemDrops: { itemKey: string, amount?: number }[] = [];
+    const itemDrops: { itemKey: string, amount?: number, noted?: boolean }[] = [];
     const npcDropTable = npcDetails.dropTable;
     if(!npcDropTable) {
         return itemDrops;
     }
 
     npcDropTable.forEach(drop => {
+        const item = findItem(drop.itemKey);
+        if (!item) {
+            return;
+        }
+
         let meetsQuestRequirements = true;
         if(drop.questRequirement) {
             meetsQuestRequirements = (player.getQuest(drop.questRequirement.questId).progress === drop.questRequirement.stage);
@@ -328,14 +333,23 @@ export function calculateNpcDrops(player: Player, npcDetails: NpcDetails): { ite
         let odds: { numerator: number, denominator: number };
         if(drop.frequency === 'always') {
             odds = { numerator: 1, denominator: 1 };
+        } else if (typeof drop.frequency === 'number') {
+            odds = { numerator: 1, denominator: (1 / drop.frequency) };
         } else {
             const dividedFrequency = drop.frequency.split('/');
             odds = { numerator: Number(dividedFrequency[0]), denominator: Number(dividedFrequency[1]) };
         }
         const randomNumber = getRandomInt(odds.denominator);
         if(randomNumber === 1 && meetsQuestRequirements) {
-            const randomNumberOfItems = getRandomInt(drop.amountMax, drop.amount);
-            itemDrops.push({ itemKey: drop.itemKey, amount: randomNumberOfItems })
+            let rolls = 1;
+            if (drop.rolls) {
+                rolls = drop.rolls;
+            }
+
+            for (let i = 0; i < rolls; i++) {
+                const randomNumberOfItems = getRandomInt(drop.amountMax, drop.amount);
+                itemDrops.push({ itemKey: item.key, amount: randomNumberOfItems, noted: drop.noted })
+            }
         }
     });
 

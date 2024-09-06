@@ -37,6 +37,7 @@ export default {
     '@engine/(.*)': '<rootDir>/src/engine/$1',
     '@server/(.*)': '<rootDir>/src/server/$1',
     '@plugins/(.*)': '<rootDir>/src/plugins/$1',
+    '@utilities/(.*)': '<rootDir>/src/utilities/$1',
   },
 
 

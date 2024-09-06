@@ -5,7 +5,7 @@
     "main": "dist/index.js",
     "scripts": {
         "start": "npm run build && concurrently \"npm run build:watch\" \"npm run start:infra\" \"npm run start:game\"",
-        "start:game": "nodemon --delay 5000ms --max-old-space-size=2048 dist/server/runner.js -- -game",
+        "start:game": "nodemon --delay 1000ms --max-old-space-size=2048 dist/server/runner.js -- -game",
         "start:game:dev": "npm run build && concurrently \"npm run build:watch\" \"npm run start:game\"",
         "start:login": "node --max-old-space-size=1024 dist/server/runner.js -- -login",
         "start:update": "node --max-old-space-size=1024 dist/server/runner.js -- -update",
@@ -17,6 +17,8 @@
         "update": "npm run start:update",
         "infra": "npm run start:infra",
         "standalone": "npm run start:standalone",
+        "utils:test": "npm run build && node dist/utilities/index.js -- -test",
+        "utils:convert-npcs": "npm run build && node dist/utilities/index.js -- -convert-npcs",
         "lint": "eslint --ext .ts src",
         "lint:fix": "eslint --ext .ts src --fix",
         "build": "rimraf dist && swc ./src -d dist --strip-leading-paths",

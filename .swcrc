@@ -11,7 +11,8 @@
         "paths": {
             "@engine/*": ["./engine/*"],
             "@plugins/*": ["./plugins/*"],
-            "@server/*": ["./server/*"]
+            "@server/*": ["./server/*"],
+            "@utilities/*": ["./utilities/*"]
         },
         "parser": {
             "syntax": "typescript",

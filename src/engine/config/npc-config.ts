@@ -28,8 +28,10 @@ export interface NpcCombatAnimations {
 }
 
 export interface DropTable {
-    itemKey: string;
-    frequency: string;
+    itemKey: string | number;
+    frequency: string | number;
+    rolls?: number;
+    noted?: boolean;
     amount?: number;
     amountMax?: number;
     questRequirement?: QuestRequirement;
