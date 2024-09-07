@@ -74,6 +74,17 @@ export class NpcSyncTask extends SyncTask<void> {
         });
     }
 
+    /**
+     * As of 2024-09-03 this has been modified to include an extra `short` if
+     * any updates are required. This extra `short` includes the `worldIndex`
+     * for this NPC, which helps the client figure out which NPC to apply the
+     * updates to.
+     *
+     * For the sake of efficiency, this `short` will only be added once, and it
+     * will always be added after the first updated value's data is processed.
+     *
+     * Make sure to keep your client updated so that it can handle it.
+     */
     private appendUpdateMaskData(npc: Npc, updateMaskData: ByteBuffer): void {
         const updateFlags = npc.updateFlags;
         if(!updateFlags.updateBlockRequired) {
@@ -103,12 +114,23 @@ export class NpcSyncTask extends SyncTask<void> {
 
         updateMaskData.put(mask, 'BYTE');
 
+        let alreadyPutWorldIndex = false;
+        const putWorldIndex = () => {
+            if (alreadyPutWorldIndex) {
+                return;
+            }
+            updateMaskData.put(npc.worldIndex, 'SHORT');
+            alreadyPutWorldIndex = true;
+        }
+
         if(updateFlags.damage !== null) {
             const damage = updateFlags.damage;
             updateMaskData.put(damage.damageDealt);
             updateMaskData.put(damage.damageType.valueOf());
             updateMaskData.put(damage.remainingHitpoints);
             updateMaskData.put(damage.maxHitpoints);
+
+            putWorldIndex();
         }
 
         if(updateFlags.faceActor !== undefined) {
@@ -129,6 +151,8 @@ export class NpcSyncTask extends SyncTask<void> {
 
                 updateMaskData.put(worldIndex, 'SHORT');
             }
+
+            putWorldIndex();
         }
 
         if(updateFlags.chatMessages.length !== 0) {
@@ -139,16 +163,20 @@ export class NpcSyncTask extends SyncTask<void> {
             } else {
                 updateMaskData.putString('Undefined Message');
             }
+
+            putWorldIndex();
         }
 
         if(updateFlags.appearanceUpdateRequired) {
             updateMaskData.put(npc.id, 'SHORT');
+            putWorldIndex();
         }
 
         if(updateFlags.facePosition) {
             const position = updateFlags.facePosition;
             updateMaskData.put(position.x * 2 + 1, 'SHORT');
             updateMaskData.put(position.y * 2 + 1, 'SHORT', 'LITTLE_ENDIAN');
+            putWorldIndex();
         }
 
         if(updateFlags.animation) {
@@ -163,6 +191,7 @@ export class NpcSyncTask extends SyncTask<void> {
                 updateMaskData.put(animation.id, 'SHORT');
                 updateMaskData.put(delay);
             }
+            putWorldIndex();
         }
     }
 
